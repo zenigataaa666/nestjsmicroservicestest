@@ -37,7 +37,7 @@ export class EmployeesController {
 
       console.log('result', result);
 
-      // Formatter la réponse selon employees.proto
+      // Formatter la réponse selon manage-employees.proto
       return {
         data: result.data.map(emp => this.formatEmployee(emp)),
         total: result.meta.total,

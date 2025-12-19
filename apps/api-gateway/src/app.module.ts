@@ -3,12 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
-import { EmployeesGatewayModule } from './gateways/employees/employees-gateway.module';
+import { ManageEmployeesGatewayModule } from './gateways/manage-employees/manage-employees-gateway.module';
 import { LoggingInterceptor } from '@app/common/interceptors/logging.interceptor';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { HealthController } from './health/health.controller';
-import { UsersGatewayModule } from './gateways/users/users-gateway.module';
-// import { DashboardGatewayModule } from './gateways/dashboard/dashboard-gateway.module';
+import { AuthManagerGatewayModule } from './gateways/auth-manager/auth-manager-gateway.module';
 
 @Module({
     imports: [
@@ -29,7 +28,8 @@ import { UsersGatewayModule } from './gateways/users/users-gateway.module';
         AuthModule,
 
         // Ajouter ici les autres modules gateway au fur et à mesure
-        UsersGatewayModule,
+        AuthManagerGatewayModule,
+        ManageEmployeesGatewayModule,
         // EventsGatewayModule,
         // CatalogGatewayModule,
     ],

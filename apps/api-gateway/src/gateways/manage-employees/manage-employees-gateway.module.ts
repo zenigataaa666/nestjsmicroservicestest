@@ -4,6 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import { EmployeesGatewayController } from './employees-gateway.controller';
 import { DepartmentsGatewayController } from './departments-gateway.controller';
+import { EmployeesGatewayService } from './employees-gateway.service';
+import { DepartmentsGatewayService } from './departments-gateway.service';
 import { AuthModule } from '../../auth/auth.module';
 
 @Module({
@@ -11,13 +13,13 @@ import { AuthModule } from '../../auth/auth.module';
         AuthModule,
         ClientsModule.registerAsync([
             {
-                name: 'EMPLOYEES_SERVICE',
+                name: 'MANAGER_EMPLOYEES_SERVICE',
                 imports: [ConfigModule],
                 useFactory: (configService: ConfigService) => ({
                     transport: Transport.GRPC,
                     options: {
-                        package: 'employees',
-                        protoPath: join(__dirname, '../../../proto/employees.proto'),
+                        package: 'manage_employees',
+                        protoPath: join(__dirname, '../../../proto/manage-employees.proto'),
                         url: configService.get('EMPLOYEES_GRPC_URL', 'localhost:50052'),
                         loader: {
                             keepCase: true,
@@ -33,5 +35,7 @@ import { AuthModule } from '../../auth/auth.module';
         ]),
     ],
     controllers: [EmployeesGatewayController, DepartmentsGatewayController],
+    providers: [EmployeesGatewayService, DepartmentsGatewayService],
+    exports: [EmployeesGatewayService, DepartmentsGatewayService],
 })
-export class EmployeesGatewayModule { }
+export class ManageEmployeesGatewayModule { }

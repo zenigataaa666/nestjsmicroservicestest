@@ -16,15 +16,17 @@ async function bootstrap() {
     const configService = app.get(ConfigService);
 
     // Chemin absolu vers le fichier proto
-    const protoPath = join(__dirname, '../../../proto/auth.proto'); // pour dist on revient une fois
-    logger.log(`📄 Chemin proto: ${protoPath}`);
+    const protoPath = join(__dirname, '../../../proto/auth-manager.proto'); // pour dist on revient une fois
+    // const protoPath = join(process.cwd(), 'proto/auth-manager.proto');
+
+    console.log('Proto Path:', protoPath);
 
     // Configuration gRPC
     app.connectMicroservice<MicroserviceOptions>({
       transport: Transport.GRPC,
       options: {
-        package: 'auth',
-        protoPath: protoPath,
+        package: 'auth_manager',
+        protoPath,
         url: `${configService.get('AUTH_GRPC_URL', '0.0.0.0:50051')}`,
         loader: {
           keepCase: true,

@@ -23,7 +23,7 @@ export class UsersGatewayController {
     constructor(private readonly usersGatewayService: UsersGatewayService) { }
 
     @Get()
-    @Roles('admin', 'hr_manager')
+    @Roles('admin')
     @ApiOperation({ summary: 'Lister les utilisateurs' })
     @ApiQuery({ name: 'page', required: false, type: Number })
     @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -38,7 +38,7 @@ export class UsersGatewayController {
     }
 
     @Post()
-    @Roles('admin', 'hr_manager')
+    @Roles('admin')
     @ApiOperation({ summary: 'Créer un utilisateur' })
     @ApiResponse({ status: 201, description: 'Utilisateur créé' })
     async createUser(@Body() createUserDto: any) {
@@ -46,7 +46,7 @@ export class UsersGatewayController {
     }
 
     @Get(':id')
-    @Roles('admin', 'hr_manager')
+    @Roles('admin')
     @ApiOperation({ summary: 'Obtenir un utilisateur par ID' })
     @ApiParam({ name: 'id', description: 'ID de l\'utilisateur' })
     @ApiResponse({ status: 200, description: 'Détails de l\'utilisateur' })
@@ -55,7 +55,7 @@ export class UsersGatewayController {
     }
 
     @Post(':id/roles')
-    @Roles('admin', 'super_admin')
+    @Roles('admin')
     @ApiOperation({ summary: 'Mettre à jour les rôles d\'un utilisateur' })
     async updateUserRoles(
         @Param('id') id: string,

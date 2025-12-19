@@ -17,41 +17,13 @@ import { RolesGatewayService } from './roles-gateway.service';
   imports: [
     ClientsModule.registerAsync([
       {
-        name: 'USERS_PACKAGE',
+        name: 'AUTH_MANAGER_SERVICE',
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
           transport: Transport.GRPC,
           options: {
-            package: 'auth', // They share the same package 'auth' in auth.proto
-            protoPath: join(__dirname, '../../../proto/auth.proto'),
-            url: configService.get('AUTH_GRPC_URL', '0.0.0.0:50051'),
-            loader: { keepCase: true, longs: String, enums: String, defaults: true, oneofs: true },
-          },
-        }),
-        inject: [ConfigService],
-      },
-      {
-        name: 'ROLES_PACKAGE',
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.GRPC,
-          options: {
-            package: 'auth',
-            protoPath: join(__dirname, '../../../proto/auth.proto'),
-            url: configService.get('AUTH_GRPC_URL', '0.0.0.0:50051'),
-            loader: { keepCase: true, longs: String, enums: String, defaults: true, oneofs: true },
-          },
-        }),
-        inject: [ConfigService],
-      },
-      {
-        name: 'PERMISSIONS_PACKAGE',
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.GRPC,
-          options: {
-            package: 'auth',
-            protoPath: join(__dirname, '../../../proto/auth.proto'),
+            package: 'auth_manager',
+            protoPath: join(__dirname, '../../../proto/auth-manager.proto'),
             url: configService.get('AUTH_GRPC_URL', '0.0.0.0:50051'),
             loader: { keepCase: true, longs: String, enums: String, defaults: true, oneofs: true },
           },
@@ -69,4 +41,4 @@ import { RolesGatewayService } from './roles-gateway.service';
   providers: [UsersGatewayService, AuthDashboardService, PermissionsGatewayService, RolesGatewayService],
   exports: [UsersGatewayService, AuthDashboardService, PermissionsGatewayService, RolesGatewayService],
 })
-export class UsersGatewayModule { }
+export class AuthManagerGatewayModule { }

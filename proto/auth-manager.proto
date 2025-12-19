@@ -2,7 +2,7 @@
 
 syntax = "proto3";
 
-package auth;
+package auth_manager;
 
 import "common.proto";
 
@@ -43,7 +43,9 @@ service RolesService {
   rpc CreateRole(CreateRoleRequest) returns (RoleResponse);
   rpc UpdateRolePermissions(UpdateRolePermissionsRequest) returns (RoleResponse);
   rpc GetPermissions(common.Empty) returns (PermissionsResponse); // Returns strings
-  
+}
+
+service PermissionsService {
   // CRUD Permissions
   rpc GetAllPermissions(common.Empty) returns (PermissionListResponse); // Returns objects
   rpc CreatePermission(CreatePermissionRequest) returns (PermissionResponse);

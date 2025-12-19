@@ -6,7 +6,7 @@ import { PermissionsService } from './permissions.service';
 export class PermissionsController {
     constructor(private readonly permissionsService: PermissionsService) { }
 
-    @GrpcMethod('RolesService', 'GetAllPermissions')
+    @GrpcMethod('PermissionsService', 'GetAllPermissions')
     async getAllPermissions() {
         try {
             const permissions = await this.permissionsService.findAll();
@@ -27,7 +27,7 @@ export class PermissionsController {
         }
     }
 
-    @GrpcMethod('RolesService', 'CreatePermission')
+    @GrpcMethod('PermissionsService', 'CreatePermission')
     async createPermission(data: any) {
         try {
             const permission = await this.permissionsService.create(data);
@@ -46,7 +46,7 @@ export class PermissionsController {
         }
     }
 
-    @GrpcMethod('RolesService', 'UpdatePermission')
+    @GrpcMethod('PermissionsService', 'UpdatePermission')
     async updatePermission(data: any) {
         try {
             const permission = await this.permissionsService.update(data.id, data);
@@ -65,7 +65,7 @@ export class PermissionsController {
         }
     }
 
-    @GrpcMethod('RolesService', 'DeletePermission')
+    @GrpcMethod('PermissionsService', 'DeletePermission')
     async deletePermission(data: { id: string }) {
         try {
             await this.permissionsService.delete(data.id);

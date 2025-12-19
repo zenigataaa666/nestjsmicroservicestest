@@ -17,7 +17,7 @@ export class UsersGatewayService implements OnModuleInit {
     private usersService: UsersServiceClient;
 
     constructor(
-        @Inject('USERS_PACKAGE') private usersClient: ClientGrpc,
+        @Inject('AUTH_MANAGER_SERVICE') private usersClient: ClientGrpc,
     ) { }
 
     onModuleInit() {

@@ -16,10 +16,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-// import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { RolesGuard } from './guards/roles.guard';
 
 @Module({
     imports: [
@@ -52,8 +49,8 @@ import { RolesGuard } from './guards/roles.guard';
                 useFactory: (configService: ConfigService) => ({
                     transport: Transport.GRPC,
                     options: {
-                        package: 'auth',
-                        protoPath: join(__dirname, '../../../proto/auth.proto'),
+                        package: 'auth_manager',
+                        protoPath: join(__dirname, '../../../proto/auth-manager.proto'),
                         url: configService.get('AUTH_GRPC_URL', '0.0.0.0:50051'),
                         loader: {
                             keepCase: true,
@@ -94,7 +91,6 @@ import { RolesGuard } from './guards/roles.guard';
         // ]),
     ],
     controllers: [AuthController],
-    // providers: [AuthService, LocalStrategy, JwtStrategy],
     providers: [AuthService, JwtStrategy],
     exports: [AuthService, JwtModule],
 })

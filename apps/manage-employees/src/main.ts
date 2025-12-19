@@ -31,15 +31,14 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
-      package: 'employees',
-      protoPath: join(__dirname, '../../../proto/employees.proto'),
-      url: `0.0.0.0:${configService.get('EMPLOYEES_GRPC_PORT', 50052)}`,
+      package: 'manage_employees',
+      protoPath: join(__dirname, '../../../proto/manage-employees.proto'),
+      url: '0.0.0.0:50052',
       loader: {
         keepCase: true,
         longs: String,
         enums: String,
         defaults: true,
-        oneofs: true,
       },
     },
   });

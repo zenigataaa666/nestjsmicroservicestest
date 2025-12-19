@@ -15,7 +15,7 @@ export class PermissionsGatewayService implements OnModuleInit {
     private permissionsService: PermissionsServiceClient;
 
     constructor(
-        @Inject('PERMISSIONS_PACKAGE') private permissionsClient: ClientGrpc,
+        @Inject('AUTH_MANAGER_SERVICE') private permissionsClient: ClientGrpc,
     ) { }
 
     onModuleInit() {

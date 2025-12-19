@@ -2,7 +2,7 @@
 
 syntax = "proto3";
 
-package employees;
+package manage_employees;
 
 import "common.proto";
 

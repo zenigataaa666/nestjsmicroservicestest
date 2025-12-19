@@ -13,7 +13,7 @@ export class RolesGatewayService implements OnModuleInit {
     private rolesService: RolesServiceClient;
 
     constructor(
-        @Inject('ROLES_PACKAGE') private rolesClient: ClientGrpc,
+        @Inject('AUTH_MANAGER_SERVICE') private rolesClient: ClientGrpc,
     ) { }
 
     onModuleInit() {

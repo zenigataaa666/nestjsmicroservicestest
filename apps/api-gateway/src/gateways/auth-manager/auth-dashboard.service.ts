@@ -10,7 +10,7 @@ interface DashboardStatsService {
 export class AuthDashboardService implements OnModuleInit {
     private dashboardService: DashboardStatsService;
 
-    constructor(@Inject('USERS_PACKAGE') private client: ClientGrpc) { }
+    constructor(@Inject('AUTH_MANAGER_SERVICE') private client: ClientGrpc) { }
 
     onModuleInit() {
         this.dashboardService = this.client.getService<DashboardStatsService>('DashboardService');
