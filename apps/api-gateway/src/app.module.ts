@@ -8,7 +8,7 @@ import { LoggingInterceptor } from '@app/common/interceptors/logging.interceptor
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 import { HealthController } from './health/health.controller';
 import { UsersGatewayModule } from './gateways/users/users-gateway.module';
-import { DashboardGatewayModule } from './gateways/dashboard/dashboard-gateway.module';
+// import { DashboardGatewayModule } from './gateways/dashboard/dashboard-gateway.module';
 
 @Module({
     imports: [
@@ -28,11 +28,8 @@ import { DashboardGatewayModule } from './gateways/dashboard/dashboard-gateway.m
         // Modules métier
         AuthModule,
 
-        UsersGatewayModule,
-        DashboardGatewayModule,
-        // EmployeesGatewayModule,
-
         // Ajouter ici les autres modules gateway au fur et à mesure
+        UsersGatewayModule,
         // EventsGatewayModule,
         // CatalogGatewayModule,
     ],

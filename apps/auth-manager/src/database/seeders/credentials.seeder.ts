@@ -1,10 +1,10 @@
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Credential, CredentialType } from '../../auth/entities/credential.entity';
-import { User } from '../../auth/entities/user.entity';
+import { Credential, CredentialType } from '../../credentials/entities/credential.entity';
+import { User } from '../../users/entities/user.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Role } from '../../auth/entities/role.entity';
+import { Role } from '../../roles/entities/role.entity';
 
 const initialUsers = [
     {

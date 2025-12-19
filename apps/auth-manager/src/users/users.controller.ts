@@ -9,7 +9,11 @@ export class UsersController {
     @GrpcMethod('UsersService', 'GetUsers')
     async getUsers(data: { pagination: any }) {
         try {
-            return await this.usersService.findAll(data.pagination);
+            const result = await this.usersService.findAll(data.pagination);
+            return {
+                users: result.users.map(user => this.formatUser(user)),
+                meta: result.meta
+            };
         } catch (error) {
             throw new RpcException({
                 code: 13,

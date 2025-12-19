@@ -2,9 +2,9 @@ import { Injectable, ConflictException, NotFoundException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { User } from '../auth/entities/user.entity';
-import { Role } from '../auth/entities/role.entity';
-import { Credential, CredentialType } from '../auth/entities/credential.entity';
+import { User } from './entities/user.entity';
+import { Role } from '../roles/entities/role.entity';
+import { Credential, CredentialType } from '../credentials/entities/credential.entity';
 
 @Injectable()
 export class UsersService {
@@ -140,6 +140,30 @@ export class UsersService {
         await this.userRepository.save(user);
 
         return this.findOne(userId);
+    }
+
+    async update(id: string, data: { first_name?: string; last_name?: string; email?: string; phone?: string; is_active?: boolean }) {
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (!user) throw new NotFoundException(`Utilisateur #${id} non trouvé`);
+
+        if (data.email && data.email !== user.email) {
+            const existing = await this.userRepository.findOne({ where: { email: data.email } });
+            if (existing) throw new ConflictException(`L'email "${data.email}" est déjà utilisé`);
+        }
+
+        Object.assign(user, data);
+        return this.userRepository.save(user);
+    }
+
+    async remove(id: string) {
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (!user) throw new NotFoundException(`Utilisateur #${id} non trouvé`);
+
+        // Soft delete (désactivation)
+        // Ou hard delete avec this.userRepository.remove(user);
+        // Ici on fait un soft delete par défaut en mettant is_active = false
+        // Mais si on veut vraiment supprimer :
+        return this.userRepository.remove(user);
     }
 
     async getPermissions(userId: string) {

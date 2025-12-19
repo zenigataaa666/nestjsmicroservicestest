@@ -26,10 +26,10 @@
 | GET     | `/roles/permissions`  | Liste toutes les permissions système.            | admin, super_admin  |
 
 ## Dashboard
-
+ 
 | Method | Route | Description | Roles |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/v1/dashboard/stats` | Récupère les statistiques globales (utilisateurs, rôles, activité). | `admin`, `manager`, `hr_manager` |
+| `GET` | `/api/v1/auth/dashboard/stats` | Récupère les statistiques globales (utilisateurs, rôles, activité). | `admin`, `manager`, `hr_manager` |
 
 ## Employés (`/employees`)
 | Méthode | Route                 | Description                                      | Rôles Requis        |

@@ -3,10 +3,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CredentialsSeeder } from './credentials.seeder';
 import { RolesSeeder } from './roles.seeder';
-import { User } from '../../auth/entities/user.entity';
-import { Credential } from '../../auth/entities/credential.entity';
-import { Role } from '../../auth/entities/role.entity';
-import { Permission } from '../../auth/entities/permission.entity';
+import { User } from '../../users/entities/user.entity';
+import { Credential } from '../../credentials/entities/credential.entity';
+import { Role } from '../../roles/entities/role.entity';
+import { Permission } from '../../permissions/entities/permission.entity';
 
 @Module({
     imports: [

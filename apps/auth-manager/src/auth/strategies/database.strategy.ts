@@ -17,8 +17,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Credential, CredentialType } from '../entities/credential.entity';
-import { User } from '../entities/user.entity';
+import { User } from '../../users/entities/user.entity';
+import { Credential, CredentialType } from '../../credentials/entities/credential.entity';
 
 @Injectable()
 export class DatabaseStrategy {

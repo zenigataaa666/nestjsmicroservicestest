@@ -8,7 +8,7 @@
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
-import { CredentialType } from './entities/credential.entity';
+import { CredentialType } from '../credentials/entities/credential.entity';
 
 @Controller()
 export class AuthController {

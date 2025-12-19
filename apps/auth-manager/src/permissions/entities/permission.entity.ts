@@ -18,7 +18,7 @@ import {
     CreateDateColumn,
     ManyToMany,
 } from 'typeorm';
-import { Role } from './role.entity';
+import { Role } from '../../roles/entities/role.entity';
 
 @Entity('permissions')
 export class Permission {

@@ -4,12 +4,20 @@
  * Endpoints pour vérifier l'état du service (utilisé par PM2, Kubernetes, etc.)
  */
 
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Inject } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import Redis from 'ioredis';
 
 @ApiTags('Health')
 @Controller('health')
 export class HealthController {
+    constructor(
+        @InjectDataSource() private readonly dataSource: DataSource,
+        @Inject('REDIS_CLIENT') private readonly redis: Redis,
+    ) { }
+
     /**
      * Health check basique
      * Retourne l'état du service avec uptime et usage mémoire
@@ -36,8 +44,36 @@ export class HealthController {
      */
     @Get('ready')
     @ApiOperation({ summary: 'Readiness probe' })
-    ready() {
-        // TODO: Vérifier la connexion DB et Redis
+    async ready() {
+        const errors: string[] = [];
+
+        // 1. Check DB
+        try {
+            if (!this.dataSource.isInitialized) {
+                errors.push('Database not initialized');
+            } else {
+                await this.dataSource.query('SELECT 1');
+            }
+        } catch (e) {
+            errors.push(`Database error: ${e.message}`);
+        }
+
+        // 2. Check Redis
+        try {
+            const ping = await this.redis.ping();
+            if (ping !== 'PONG') errors.push('Redis ping failed');
+        } catch (e) {
+            errors.push(`Redis error: ${e.message}`);
+        }
+
+        if (errors.length > 0) {
+            return {
+                status: 'not_ready',
+                errors,
+                timestamp: new Date().toISOString(),
+            };
+        }
+
         return {
             status: 'ready',
             timestamp: new Date().toISOString(),

@@ -11,9 +11,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { HealthController } from './health/health.controller';
+import { HealthModule } from './health/health.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { CredentialsModule } from './credentials/credentials.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 
 
@@ -68,9 +70,12 @@ import { DashboardModule } from './dashboard/dashboard.module';
         AuthModule,
         UsersModule,
         RolesModule,
-        DashboardModule
+        PermissionsModule,
+        CredentialsModule,
+        DashboardModule,
+        HealthModule
     ],
-    controllers: [HealthController],
+    controllers: [],
     providers: [],
 })
 export class AppModule { }

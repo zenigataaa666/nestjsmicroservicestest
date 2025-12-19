@@ -13,10 +13,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { Credential } from './entities/credential.entity';
-import { User } from './entities/user.entity';
-import { Role } from './entities/role.entity';
-import { Permission } from './entities/permission.entity';
+import { Credential } from '../credentials/entities/credential.entity';
+import { User } from '../users/entities/user.entity';
+import { Role } from '../roles/entities/role.entity';
+import { Permission } from '../permissions/entities/permission.entity';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { DatabaseStrategy } from './strategies/database.strategy';
 import { LdapStrategy } from './strategies/ldap.strategy';
@@ -46,6 +46,6 @@ import { JwtModule } from '@nestjs/jwt';
             inject: [ConfigService],
         }
     ],
-    exports: [AuthService],
+    exports: [AuthService, 'REDIS_CLIENT'],
 })
 export class AuthModule { }

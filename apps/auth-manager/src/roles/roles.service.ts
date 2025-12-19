@@ -1,8 +1,8 @@
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { Role } from '../auth/entities/role.entity';
-import { Permission } from '../auth/entities/permission.entity';
+import { Role } from './entities/role.entity';
+import { Permission } from '../permissions/entities/permission.entity';
 
 @Injectable()
 export class RolesService {
@@ -43,5 +43,36 @@ export class RolesService {
 
     async findAllPermissions() {
         return this.permissionRepository.find();
+    }
+
+    async findAllPermissionsFull() {
+        return this.permissionRepository.find();
+    }
+
+    async createPermission(data: { name: string; description?: string; resource?: string; action?: string }) {
+        const existingPermission = await this.permissionRepository.findOne({ where: { name: data.name } });
+        if (existingPermission) throw new ConflictException(`La permission ${data.name} existe déjà`);
+
+        const permission = this.permissionRepository.create(data);
+        return this.permissionRepository.save(permission);
+    }
+
+    async updatePermission(id: string, data: { name?: string; description?: string; resource?: string; action?: string }) {
+        const permission = await this.permissionRepository.findOne({ where: { id } });
+        if (!permission) throw new NotFoundException('Permission non trouvée');
+
+        if (data.name && data.name !== permission.name) {
+            const existing = await this.permissionRepository.findOne({ where: { name: data.name } });
+            if (existing) throw new ConflictException(`La permission ${data.name} existe déjà`);
+        }
+
+        Object.assign(permission, data);
+        return this.permissionRepository.save(permission);
+    }
+
+    async deletePermission(id: string) {
+        const result = await this.permissionRepository.delete(id);
+        if (result.affected === 0) throw new NotFoundException('Permission non trouvée');
+        return { success: true };
     }
 }

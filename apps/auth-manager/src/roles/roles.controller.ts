@@ -74,4 +74,76 @@ export class RolesController {
             });
         }
     }
+
+    @GrpcMethod('RolesService', 'GetAllPermissions')
+    async getAllPermissions() {
+        try {
+            const permissions = await this.rolesService.findAllPermissionsFull();
+            return {
+                permissions: permissions.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    description: p.description,
+                    resource: p.resource,
+                    action: p.action
+                }))
+            };
+        } catch (error) {
+            throw new RpcException({
+                code: 13,
+                message: error.message || 'Erreur récupération permissions',
+            });
+        }
+    }
+
+    @GrpcMethod('RolesService', 'CreatePermission')
+    async createPermission(data: any) {
+        try {
+            const permission = await this.rolesService.createPermission(data);
+            return {
+                id: permission.id,
+                name: permission.name,
+                description: permission.description,
+                resource: permission.resource,
+                action: permission.action
+            };
+        } catch (error) {
+            throw new RpcException({
+                code: 6,
+                message: error.message || 'Erreur création permission',
+            });
+        }
+    }
+
+    @GrpcMethod('RolesService', 'UpdatePermission')
+    async updatePermission(data: any) {
+        try {
+            const permission = await this.rolesService.updatePermission(data.id, data);
+            return {
+                id: permission.id,
+                name: permission.name,
+                description: permission.description,
+                resource: permission.resource,
+                action: permission.action
+            };
+        } catch (error) {
+            throw new RpcException({
+                code: 5,
+                message: error.message || 'Erreur modification permission',
+            });
+        }
+    }
+
+    @GrpcMethod('RolesService', 'DeletePermission')
+    async deletePermission(data: { id: string }) {
+        try {
+            await this.rolesService.deletePermission(data.id);
+            return { success: true };
+        } catch (error) {
+            throw new RpcException({
+                code: 5,
+                message: error.message || 'Erreur suppression permission',
+            });
+        }
+    }
 }

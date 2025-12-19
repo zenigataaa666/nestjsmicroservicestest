@@ -20,8 +20,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import LdapAuth from 'ldapauth-fork';
-import { Credential, CredentialType } from '../entities/credential.entity';
-import { User } from '../entities/user.entity';
+import { Credential, CredentialType } from '../../credentials/entities/credential.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Injectable()
 export class LdapStrategy {

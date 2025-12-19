@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { Permission } from '../../auth/entities/permission.entity';
-import { Role } from '../../auth/entities/role.entity';
+import { Permission } from '../../permissions/entities/permission.entity';
+import { Role } from '../../roles/entities/role.entity';
 
 @Injectable()
 export class RolesSeeder {

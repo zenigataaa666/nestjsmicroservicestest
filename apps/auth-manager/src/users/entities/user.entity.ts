@@ -20,8 +20,8 @@ import {
     OneToMany,
     Index,
 } from 'typeorm';
-import { Role } from './role.entity';
-import { Credential } from './credential.entity';
+import { Role } from '../../roles/entities/role.entity';
+import { Credential } from '../../credentials/entities/credential.entity';
 
 @Entity('users')
 @Index(['email'])

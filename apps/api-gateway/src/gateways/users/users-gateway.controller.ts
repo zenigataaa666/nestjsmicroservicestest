@@ -6,7 +6,8 @@ import {
     Param,
     Query,
     UseGuards,
-    Put
+    Put,
+    Delete
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -61,5 +62,24 @@ export class UsersGatewayController {
         @Body('role_ids') roleIds: string[]
     ) {
         return this.usersGatewayService.updateUserRoles(id, roleIds);
+    }
+
+    @Put(':id')
+    @Roles('admin')
+    @ApiOperation({ summary: 'Mettre à jour un utilisateur' })
+    @ApiResponse({ status: 200, description: 'Utilisateur mis à jour' })
+    async updateUser(
+        @Param('id') id: string,
+        @Body() updateUserDto: any
+    ) {
+        return this.usersGatewayService.updateUser(id, updateUserDto);
+    }
+
+    @Delete(':id')
+    @Roles('admin')
+    @ApiOperation({ summary: 'Supprimer un utilisateur' })
+    @ApiResponse({ status: 200, description: 'Utilisateur supprimé' })
+    async deleteUser(@Param('id') id: string) {
+        return this.usersGatewayService.deleteUser(id);
     }
 }
