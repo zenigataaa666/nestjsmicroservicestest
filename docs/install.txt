@@ -1,0 +1,24 @@
+
+
+npm install @nestjs/microservices ioredis
+npm install @nestjs/jwt @nestjs/passport passport passport-jwt
+npm install @nestjs/typeorm typeorm mysql2
+npm install bcrypt ldapjs
+npm install @nestjs/config @nestjs/swagger @nestjs/throttler
+npm install helmet compression
+npm install -D @types/bcrypt @types/ldapjs @types/passport-jwt
+
+npm install --save class-validator class-transformer
+npm install --save passport-ldapauth
+
+npm install -D @types/helmet @types/compression
+
+
+npm install @grpc/grpc-js @grpc/proto-loader
+npm install -D @types/google-protobuf
+
+npm install -D grpc-tools ts-proto
+
+
+npm install --save-dev ts-node tsconfig-paths
+

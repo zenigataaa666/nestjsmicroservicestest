@@ -1,0 +1,27 @@
+createRegister endpoint
+
+
+
+npm run seed:auth
+
+npm run start:gateway
+npm run start:auth
+npm run start:employees
+
+npm run start:all
+
+
+
+
+changer le password du credential de ldap
+
+dans auth-manager
+
+authservice compléter :
+validateToken
+logout
+
+
+---------
+
+

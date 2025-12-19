@@ -1,0 +1,31 @@
+// Types communs utilisés dans tous les services
+
+syntax = "proto3";
+
+package common;
+
+// Message de pagination pour les listes
+message PaginationRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string search = 3;
+  string sort_by = 4;
+  string sort_order = 5;
+}
+
+message PaginationResponse {
+  int32 total = 1;
+  int32 page = 2;
+  int32 limit = 3;
+  int32 total_pages = 4;
+}
+
+// Message de réponse générique
+message Status {
+  bool success = 1;
+  string message = 2;
+  int32 code = 3;
+}
+
+// Message vide pour les requêtes sans paramètres
+message Empty {}

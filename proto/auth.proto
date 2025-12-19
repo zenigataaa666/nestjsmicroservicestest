@@ -1,0 +1,195 @@
+// Définition du service d'authentification
+
+syntax = "proto3";
+
+package auth;
+
+import "common.proto";
+
+// ==================== SERVICES ====================
+
+service AuthService {
+  // Authentification
+  rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse);
+  
+  // Validation de token
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+
+  // Rafraîchissement de token
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+  
+  // Déconnexion
+  rpc Logout(LogoutRequest) returns (common.Status);
+}
+// Service Dashboard
+service DashboardService {
+  rpc GetDashboardStats (common.Empty) returns (DashboardStatsResponse);
+}
+
+service UsersService {
+  // Gestion des utilisateurs
+  rpc GetUsers(GetUsersRequest) returns (UsersResponse);
+  rpc GetUser(GetUserRequest) returns (UserResponse);
+  rpc CreateUser(CreateUserRequest) returns (UserResponse);
+  rpc UpdateUserRoles(UpdateUserRolesRequest) returns (UserResponse);
+  rpc GetUserPermissions(GetUserPermissionsRequest) returns (PermissionsResponse);
+}
+
+service RolesService {
+  // Gestion des rôles et permissions
+  rpc GetRoles(common.Empty) returns (RolesResponse);
+  rpc CreateRole(CreateRoleRequest) returns (RoleResponse);
+  rpc UpdateRolePermissions(UpdateRolePermissionsRequest) returns (RoleResponse);
+  rpc GetPermissions(common.Empty) returns (PermissionsResponse);
+}
+
+// ==================== MESSAGES ====================
+
+// Authentification
+message AuthenticateRequest {
+  string identifier = 1;  // username, email, ou api_key
+  string password = 2;
+  string type = 3;        // 'password', 'ldap', ou 'api_key'
+}
+
+message AuthenticateResponse {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string full_name = 6;
+  string phone = 7;
+  repeated string roles = 8;
+  repeated string permissions = 9;
+  string refresh_token = 10;
+}
+
+// Validation de token
+message ValidateTokenRequest {
+  string token = 1;
+}
+
+message ValidateTokenResponse {
+  bool valid = 1;
+}
+
+// Rafraîchissement de token
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+  string refresh_token = 1; // Nouveau refresh token (rotation)
+  UserResponse user = 2;    // Infos utilisateur pour regénérer le JWT
+}
+
+// Déconnexion
+message LogoutRequest {
+  string user_id = 1;
+  string access_token = 2;
+}
+
+// Récupération utilisateur
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message UserResponse {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string full_name = 6;
+  string phone = 7;
+  bool is_active = 8;
+  repeated RoleResponse roles = 9;
+  repeated string permissions = 10;
+  string created_at = 11;
+}
+
+message RoleResponse {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  repeated string permissions = 4;
+}
+
+// Stats Dashboard
+message DashboardStatsResponse {
+  int32 total_users = 1;
+  int32 active_users = 2;
+  int32 inactive_users = 3;
+  int32 new_users_last_7_days = 4;
+  int32 total_roles = 5;
+  repeated RoleDistribution role_distribution = 6;
+  repeated RecentActivity recent_activity = 7;
+}
+
+message RoleDistribution {
+  string role_name = 1;
+  int32 count = 2;
+}
+
+message RecentActivity {
+  string id = 1;
+  string username = 2;
+  string action = 3;
+  string timestamp = 4;
+}
+
+// Création utilisateur
+message CreateUserRequest {
+  string username = 1;
+  string password = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string email = 5;
+  string phone = 6;
+  repeated string role_ids = 7;
+  string credential_type = 8;  // 'password', 'ldap', ou 'api_key'
+}
+
+// Mise à jour des rôles
+message UpdateUserRolesRequest {
+  string user_id = 1;
+  repeated string role_ids = 2;
+}
+
+// Permissions
+message GetUserPermissionsRequest {
+  string user_id = 1;
+}
+
+message PermissionsResponse {
+  repeated string permissions = 1;
+}
+
+// Liste utilisateurs
+message GetUsersRequest {
+  common.PaginationRequest pagination = 1;
+}
+
+message UsersResponse {
+  repeated UserResponse users = 1;
+  common.PaginationResponse meta = 2;
+}
+
+// Liste rôles
+message RolesResponse {
+  repeated RoleResponse roles = 1;
+}
+
+// Création rôle
+message CreateRoleRequest {
+  string name = 1;
+  string description = 2;
+  repeated string permissions = 3;
+}
+
+// Mise à jour permissions rôle
+message UpdateRolePermissionsRequest {
+  string role_id = 1;
+  repeated string permissions = 2;
+}
