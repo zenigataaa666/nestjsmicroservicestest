@@ -4,6 +4,8 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { PermissionsGatewayService } from './permissions-gateway.service';
+import { CreatePermissionDto } from './dto/create-permission.dto';
+import { UpdatePermissionDto } from './dto/update-permission.dto';
 
 @ApiTags('Gestion des Permissions')
 @ApiBearerAuth()
@@ -22,7 +24,7 @@ export class PermissionsGatewayController {
     @Post()
     @Roles('admin')
     @ApiOperation({ summary: 'Créer une permission' })
-    async createPermission(@Body() data: { name: string; description: string; resource: string; action: string }) {
+    async createPermission(@Body() data: CreatePermissionDto) {
         return this.permissionsGatewayService.createPermission(data);
     }
 
@@ -31,7 +33,7 @@ export class PermissionsGatewayController {
     @ApiOperation({ summary: 'Mettre à jour une permission' })
     async updatePermission(
         @Param('id') id: string,
-        @Body() data: { name?: string; description?: string; resource?: string; action?: string }
+        @Body() data: UpdatePermissionDto
     ) {
         return this.permissionsGatewayService.updatePermission(id, data);
     }

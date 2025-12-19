@@ -61,27 +61,27 @@ async function bootstrap() {
     prefix: 'api/v',
   });
 
-  // ==================== PREFIX GLOBAL ====================
-
-  // Préfixe global (facultatif si vous utilisez déjà /api/v1 dans les routes)
-  // app.setGlobalPrefix('api');
-
   // ==================== DOCUMENTATION SWAGGER ====================
 
   const config = new DocumentBuilder()
     .setTitle('Microservices API Gateway')
     .setDescription(`
-      API Gateway centralisée pour l'architecture microservices.
+      # API Gateway pour l'architecture Microservices
+
+      Cette API Gateway centralise l'accès à tous les microservices de l'application.
       
-      ## Authentification
-      Utilisez l'endpoint /api/v1/auth/login pour obtenir un token JWT.
-      Ensuite, incluez le token dans le header Authorization: Bearer <token>
-      
-      ## Services disponibles
-      - **Auth**: Authentification et gestion des utilisateurs
-      - **Employees**: Gestion des employés et départements
-      - **Events**: Gestion des événements (à venir)
-      - **Catalog**: Gestion du patrimoine (à venir)
+      ## 🔐 Authentification (Auth Manager)
+      - **Users**: Gestion des utilisateurs et de leurs profils.
+      - **Roles & Permissions**: Gestion fine des droits d'accès (RBAC).
+      - **Auth**: Connexion, Refresh Token, Logout.
+
+      ## 👥 Ressources Humaines (Manage Employees)
+      - **Employees**: Gestion des dossiers employés.
+      - **Departments**: Organisation hiérarchique et structurelle.
+
+      ## 🛠 Utilisation
+      1. Obtenez un token via \`/api/v1/auth/login\`.
+      2. Utilisez le bouton **Authorize** ci-dessus pour coller votre token (Bearer).
     `)
     .setVersion('1.0')
     .addBearerAuth(
@@ -95,9 +95,17 @@ async function bootstrap() {
       },
       'JWT-auth',
     )
-    .addTag('Authentication', 'Endpoints d\'authentification et gestion de session')
-    .addTag('Employees Management', 'Gestion des employés')
-    .addTag('Departments', 'Gestion des départements')
+    // Tags Auth Manager
+    .addTag('Authentification', 'Endpoints de connexion et gestion de session')
+    .addTag('Gestion des Utilisateurs', 'Administration des comptes utilisateurs')
+    .addTag('Gestion des Rôles', 'Configuration des rôles et permissions')
+    .addTag('Gestion des Permissions', 'Catalogue des permissions disponibles')
+
+    // Tags Manage Employees
+    .addTag('Employees Management', 'Gestion administrative des employés')
+    .addTag('Departments', 'Gestion des départements et services')
+
+    // Tags Utils
     .addTag('Health Check', 'Vérification de l\'état du service')
     .addServer('http://localhost:3000', 'Serveur de développement')
     .addServer('https://api.votre-domaine.com', 'Serveur de production')
@@ -117,8 +125,8 @@ async function bootstrap() {
 
   // ==================== DÉMARRAGE ====================
 
-  const port = configService.get('PORT', 3000);
-  const host = configService.get('HOST', '0.0.0.0');
+  const port = configService.get('API_GATEWAY_PORT', 3000);
+  const host = configService.get('API_GATEWAY_HOST', '0.0.0.0');
 
   await app.listen(port, host);
 

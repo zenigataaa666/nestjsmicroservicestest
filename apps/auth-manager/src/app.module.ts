@@ -34,11 +34,11 @@ import { DashboardModule } from './dashboard/dashboard.module';
             imports: [ConfigModule],
             useFactory: (configService: ConfigService) => ({
                 type: 'mysql',
-                host: configService.get('AUTH_DB_HOST', 'localhost'),
-                port: configService.get('AUTH_DB_PORT', 3306),
-                username: configService.get('AUTH_DB_USERNAME'),
-                password: configService.get('AUTH_DB_PASSWORD'),
-                database: configService.get('AUTH_DB_DATABASE'),
+                host: configService.get('AUTH_MANAGER_DB_HOST', 'localhost'),
+                port: configService.get('AUTH_MANAGER_DB_PORT', 3306),
+                username: configService.get('AUTH_MANAGER_DB_USERNAME'),
+                password: configService.get('AUTH_MANAGER_DB_PASSWORD'),
+                database: configService.get('AUTH_MANAGER_DB_DATABASE'),
 
                 // Auto-chargement des entités
                 autoLoadEntities: true,

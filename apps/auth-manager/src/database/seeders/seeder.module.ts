@@ -22,11 +22,11 @@ import { Permission } from '../../permissions/entities/permission.entity';
             imports: [ConfigModule],
             useFactory: (configService: ConfigService) => ({
                 type: 'mysql',
-                host: configService.get('AUTH_DB_HOST', 'localhost'),
-                port: configService.get('AUTH_DB_PORT', 3306),
-                username: configService.get('AUTH_DB_USERNAME'),
-                password: configService.get('AUTH_DB_PASSWORD'),
-                database: configService.get('AUTH_DB_DATABASE'),
+                host: configService.get('AUTH_MANAGER_DB_HOST', 'localhost'),
+                port: configService.get('AUTH_MANAGER_DB_PORT', 3306),
+                username: configService.get('AUTH_MANAGER_DB_USERNAME'),
+                password: configService.get('AUTH_MANAGER_DB_PASSWORD'),
+                database: configService.get('AUTH_MANAGER_DB_DATABASE'),
                 autoLoadEntities: false,
                 entities: [User, Credential, Role, Permission],
                 synchronize: true, // IMPORTANT: Enable sync to fix join table schema if needed

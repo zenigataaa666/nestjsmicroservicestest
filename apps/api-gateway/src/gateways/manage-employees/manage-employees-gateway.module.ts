@@ -20,7 +20,7 @@ import { AuthModule } from '../../auth/auth.module';
                     options: {
                         package: 'manage_employees',
                         protoPath: join(__dirname, '../../../proto/manage-employees.proto'),
-                        url: configService.get('EMPLOYEES_GRPC_URL', 'localhost:50052'),
+                        url: configService.get('MANAGE_EMPLOYEES_GRPC_URL', 'localhost:50052'),
                         loader: {
                             keepCase: true,
                             longs: String,

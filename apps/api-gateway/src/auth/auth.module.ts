@@ -51,7 +51,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
                     options: {
                         package: 'auth_manager',
                         protoPath: join(__dirname, '../../../proto/auth-manager.proto'),
-                        url: configService.get('AUTH_GRPC_URL', '0.0.0.0:50051'),
+                        url: configService.get('AUTH_MANAGER_GRPC_URL', '0.0.0.0:50051'),
                         loader: {
                             keepCase: true,
                             longs: String,

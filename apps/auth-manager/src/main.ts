@@ -27,7 +27,7 @@ async function bootstrap() {
       options: {
         package: 'auth_manager',
         protoPath,
-        url: `${configService.get('AUTH_GRPC_URL', '0.0.0.0:50051')}`,
+        url: `${configService.get('AUTH_MANAGER_GRPC_URL', '0.0.0.0:50051')}`,
         loader: {
           keepCase: true,
           longs: String,
@@ -51,12 +51,12 @@ async function bootstrap() {
     );
 
     await app.startAllMicroservices();
-    logger.log(`🔐 AuthManager gRPC démarré sur le port ${configService.get('AUTH_GRPC_PORT', 50051)}`);
+    logger.log(`🔐 AuthManager gRPC démarré sur le port ${configService.get('AUTH_MANAGER_GRPC_PORT', 50051)}`);
 
     // ==================== DÉMARRAGE ====================
 
-    const port = configService.get('AUTH_PORT', 3001);
-    const host = configService.get('AUTH_HOST', '0.0.0.0');
+    const port = configService.get('AUTH_MANAGER_PORT', 3001);
+    const host = configService.get('AUTH_MANAGER_HOST', '0.0.0.0');
 
     await app.listen(port, host);
 
@@ -65,7 +65,7 @@ async function bootstrap() {
 ║                                                           ║
 ║   🔐 AuthManager démarré avec succès !                   ║
 ║                                                           ║
-║   📡 gRPC: 0.0.0.0:${configService.get('AUTH_GRPC_PORT', 50051).toString().padEnd(20)}           ║
+║   📡 gRPC: 0.0.0.0:${configService.get('AUTH_MANAGER_GRPC_PORT', 50051).toString().padEnd(20)}           ║
 ║   🏥 Health Check: http://${host}:${port}/health         ║
 ║   🌍 Environment: ${configService.get('NODE_ENV', 'development').toUpperCase().padEnd(20)}║
 ║                                                           ║

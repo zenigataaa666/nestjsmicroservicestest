@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
@@ -62,23 +61,11 @@ async function bootstrap() {
     prefix: 'api/v',
   });
 
-  // ==================== DOCUMENTATION SWAGGER ====================
-  const config = new DocumentBuilder()
-    .setTitle('Manage Employees Microservice')
-    .setDescription('Microservice de gestion des employés et départements')
-    .setVersion('1.0')
-    .addTag('Employees', 'Gestion des employés')
-    .addTag('Departments', 'Gestion des départements')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
-
   // ==================== DÉMARRAGE ====================
   await app.startAllMicroservices();
 
-  const grpcPort = configService.get('EMPLOYEES_GRPC_PORT', 50052);
-  const httpPort = configService.get('EMPLOYEES_PORT', 3002);
+  const grpcPort = configService.get('MANAGE_EMPLOYEES_GRPC_PORT', 50052);
+  const httpPort = configService.get('MANAGE_EMPLOYEES_PORT', 3002);
   const host = configService.get('HOST', '0.0.0.0');
 
   await app.listen(httpPort, host);
@@ -90,7 +77,6 @@ async function bootstrap() {
   ║                                                           ║
   ║   📡 gRPC: 0.0.0.0:${grpcPort}                           ║
   ║   🌍 HTTP: http://${host}:${httpPort}                       ║
-  ║   📚 Docs: http://${host}:${httpPort}/api/docs              ║
   ║                                                           ║
   ╚═══════════════════════════════════════════════════════════╝
   `);

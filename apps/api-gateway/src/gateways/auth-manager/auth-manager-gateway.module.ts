@@ -24,7 +24,7 @@ import { RolesGatewayService } from './roles-gateway.service';
           options: {
             package: 'auth_manager',
             protoPath: join(__dirname, '../../../proto/auth-manager.proto'),
-            url: configService.get('AUTH_GRPC_URL', '0.0.0.0:50051'),
+            url: configService.get('AUTH_MANAGER_GRPC_URL', '0.0.0.0:50051'),
             loader: { keepCase: true, longs: String, enums: String, defaults: true, oneofs: true },
           },
         }),

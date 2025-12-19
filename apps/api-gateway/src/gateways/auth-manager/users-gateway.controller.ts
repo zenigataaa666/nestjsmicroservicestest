@@ -9,11 +9,15 @@ import {
     Put,
     Delete
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { UsersGatewayService } from './users-gateway.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
+import { GetUsersQueryDto } from './dto/get-users-query.dto';
 
 @ApiTags('Gestion des Utilisateurs')
 @ApiBearerAuth()
@@ -23,30 +27,23 @@ export class UsersGatewayController {
     constructor(private readonly usersGatewayService: UsersGatewayService) { }
 
     @Get()
-    @Roles('admin')
+    @Roles('admin', 'hr_manager')
     @ApiOperation({ summary: 'Lister les utilisateurs' })
-    @ApiQuery({ name: 'page', required: false, type: Number })
-    @ApiQuery({ name: 'limit', required: false, type: Number })
-    @ApiQuery({ name: 'search', required: false, type: String })
     @ApiResponse({ status: 200, description: 'Liste des utilisateurs paginée' })
-    async getUsers(
-        @Query('page') page: number = 1,
-        @Query('limit') limit: number = 10,
-        @Query('search') search?: string
-    ) {
-        return this.usersGatewayService.getUsers({ page, limit, search });
+    async getUsers(@Query() query: GetUsersQueryDto) {
+        return this.usersGatewayService.getUsers(query);
     }
 
     @Post()
     @Roles('admin')
     @ApiOperation({ summary: 'Créer un utilisateur' })
     @ApiResponse({ status: 201, description: 'Utilisateur créé' })
-    async createUser(@Body() createUserDto: any) {
+    async createUser(@Body() createUserDto: CreateUserDto) {
         return this.usersGatewayService.createUser(createUserDto);
     }
 
     @Get(':id')
-    @Roles('admin')
+    @Roles('admin', 'hr_manager')
     @ApiOperation({ summary: 'Obtenir un utilisateur par ID' })
     @ApiParam({ name: 'id', description: 'ID de l\'utilisateur' })
     @ApiResponse({ status: 200, description: 'Détails de l\'utilisateur' })
@@ -57,11 +54,12 @@ export class UsersGatewayController {
     @Post(':id/roles')
     @Roles('admin')
     @ApiOperation({ summary: 'Mettre à jour les rôles d\'un utilisateur' })
+    @ApiBody({ type: UpdateUserRolesDto })
     async updateUserRoles(
         @Param('id') id: string,
-        @Body('role_ids') roleIds: string[]
+        @Body() dto: UpdateUserRolesDto
     ) {
-        return this.usersGatewayService.updateUserRoles(id, roleIds);
+        return this.usersGatewayService.updateUserRoles(id, dto.role_ids);
     }
 
     @Put(':id')
@@ -70,7 +68,7 @@ export class UsersGatewayController {
     @ApiResponse({ status: 200, description: 'Utilisateur mis à jour' })
     async updateUser(
         @Param('id') id: string,
-        @Body() updateUserDto: any
+        @Body() updateUserDto: UpdateUserDto
     ) {
         return this.usersGatewayService.updateUser(id, updateUserDto);
     }
