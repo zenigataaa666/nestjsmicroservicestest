@@ -56,8 +56,8 @@ export class EmployeesService {
       where.department_id = departmentId;
     }
 
-    if (isActive !== undefined) {
-      where.status = isActive ? 'active' : Not('active');
+    if (queryDto.status) {
+      where.status = queryDto.status;
     }
 
     // Note: Search implementation would typicalyl use ILIKE, but keeping it simple for now or using TypeORM operators if needed.

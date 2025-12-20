@@ -1,18 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EmployeesModule } from './employees/employees.module';
 import { DepartmentsModule } from './departments/departments.module';
-import databaseConfig from './config/database.config';
-import { Employee } from './employees/entities/employee.entity';
-import { Department } from './departments/entities/department.entity';
-
+import { EmployeesModule } from './employees/employees.module';
+import { DocumentsModule } from './documents/documents.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig],
-      envFilePath: ['.env.local', '.env'],
+      envFilePath: '.env',
+      expandVariables: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -23,19 +20,38 @@ import { Department } from './departments/entities/department.entity';
         username: configService.get('MANAGE_EMPLOYEES_DB_USERNAME'),
         password: configService.get('MANAGE_EMPLOYEES_DB_PASSWORD'),
         database: configService.get('MANAGE_EMPLOYEES_DB_DATABASE'),
+
+
+        // Auto-chargement des entités
         autoLoadEntities: true,
-        synchronize: configService.get('MANAGE_EMPLOYEES_DB_SYNCHRONIZE'),
-        logging: configService.get('MANAGE_EMPLOYEES_DB_LOGGING'),
-        timezone: '+01:00',
-        charset: 'utf8mb4',
-        extra: {
-          connectionLimit: 10,
-        },
+        // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+
+        // CRITIQUE: false en production pour éviter la perte de données
+        synchronize: true, // IMPORTANT: false en production
+
+        // Logs SQL en développement uniquement
+        logging: configService.get('NODE_ENV') === 'development' ? ['query', 'error'] : ['error'],
+
+        // // Options de pool de connexions
+        // extra: {
+        //     connectionLimit: 10,        // Max 10 connexions simultanées
+        //     connectTimeout: 60000,      // Timeout connexion: 60s
+        //     acquireTimeout: 60000,      // Timeout acquisition: 60s
+        //     timeout: 60000,             // Timeout requête: 60s
+        // },
+
+        // // Retry automatique en cas d'erreur de connexion
+        // retryAttempts: 3,
+        // retryDelay: 3000,
+
+        // // Charset UTF-8 pour support caractères internationaux
+        // charset: 'utf8mb4',
       }),
       inject: [ConfigService],
     }),
-    EmployeesModule,
     DepartmentsModule,
+    EmployeesModule,
+    DocumentsModule,
   ],
 })
 export class AppModule { }

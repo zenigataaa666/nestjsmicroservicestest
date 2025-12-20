@@ -12,19 +12,21 @@ export class CreateEmployeeDto {
     @MaxLength(50)
     employee_code: string;
 
+    @IsOptional()
     @IsString()
     @MinLength(2)
     @MaxLength(100)
-    first_name: string;
+    first_name?: string;
 
     @IsString()
     @MinLength(2)
     @MaxLength(100)
     last_name: string;
 
+    @IsOptional()
     @IsEmail()
     @MaxLength(255)
-    email: string;
+    email?: string;
 
     @IsOptional()
     @IsString()
@@ -38,22 +40,25 @@ export class CreateEmployeeDto {
     @IsDateString()
     birth_date?: string;
 
+    @IsOptional()
     @IsString()
     @MinLength(2)
     @MaxLength(100)
-    position: string;
+    position?: string;
 
+    @IsOptional()
     @IsNumber()
     @Min(0)
     @Type(() => Number)
-    salary: number;
+    salary?: number;
 
     @IsOptional()
     @IsUUID()
     department_id?: string;
 
+    @IsOptional()
     @IsEnum(['active', 'on_leave', 'suspended', 'terminated'])
-    status: string;
+    status?: string;
 
     @IsOptional()
     @IsString()
@@ -63,11 +68,6 @@ export class CreateEmployeeDto {
     @IsString()
     @MaxLength(100)
     city?: string;
-
-    @IsOptional()
-    @IsString()
-    @MaxLength(20)
-    postal_code?: string;
 
     @IsOptional()
     @IsString()

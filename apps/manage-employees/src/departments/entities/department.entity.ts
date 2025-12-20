@@ -14,7 +14,6 @@ import {
 @Entity('departments')
 @Index(['code'], { unique: true })
 @Index(['parent_id'])
-@Index(['status'])
 export class Department {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -50,22 +49,6 @@ export class Department {
     @ManyToOne(() => Employee, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'manager_id' })
     manager: Employee;
-
-    @Column({
-        type: 'enum',
-        enum: ['active', 'inactive', 'archived'],
-        default: 'active',
-    })
-    status: string;
-
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    location: string | null;
-
-    @Column({ name: 'budget', type: 'decimal', precision: 15, scale: 2, nullable: true })
-    budget: number | null;
-
-    @Column({ name: 'cost_center', type: 'varchar', length: 50, nullable: true })
-    cost_center: string | null;
 
     @CreateDateColumn({ name: 'created_at' })
     created_at: Date;

@@ -1,5 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsNumber, IsUUID, MaxLength, MinLength, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsString, IsOptional, IsUUID, MaxLength, MinLength, IsEnum } from 'class-validator';
 
 export class CreateDepartmentDto {
     @IsString()
@@ -23,23 +22,4 @@ export class CreateDepartmentDto {
     @IsOptional()
     @IsUUID()
     manager_id?: string;
-
-    @IsEnum(['active', 'inactive', 'archived'])
-    status: string;
-
-    @IsOptional()
-    @IsString()
-    @MaxLength(255)
-    location?: string;
-
-    @IsOptional()
-    @IsNumber()
-    @Min(0)
-    @Type(() => Number)
-    budget?: number;
-
-    @IsOptional()
-    @IsString()
-    @MaxLength(50)
-    cost_center?: string;
 }

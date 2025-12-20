@@ -18,7 +18,7 @@ export class EmployeesController {
     limit?: number;
     search?: string;
     department_id?: string;
-    is_active?: boolean;
+    status?: string;
     sort_by?: string;
     sort_order?: string;
   }) {
@@ -30,16 +30,18 @@ export class EmployeesController {
         limit: data.limit || 10,
         search: data.search,
         departmentId: data.department_id,
-        isActive: data.is_active,
-        sortBy: data.sort_by || 'lastName',
+        // Map boolean is_active from proto to status enum logic if service supports it, 
+        // or let service handle undefined (proto defaults false if missing in proto3? No, optional or default).
+        // For now pass as is, service likely expects specific filters.
+        // Map status from proto
+        status: data.status,
+        sortBy: data.sort_by || 'last_name', // standardized snake_case
         sortOrder: data.sort_order || 'ASC',
       });
 
-      console.log('result', result);
-
       // Formatter la réponse selon manage-employees.proto
       return {
-        data: result.data.map(emp => this.formatEmployee(emp)),
+        data: result.data,
         total: result.meta.total,
         page: result.meta.page,
         limit: result.meta.limit,
@@ -60,7 +62,7 @@ export class EmployeesController {
     try {
       this.logger.debug(`Récupération de l'employé ${data.id}`);
       const employee = await this.employeesService.findOne(data.id);
-      return this.formatEmployee(employee);
+      return employee;
     } catch (error) {
       this.logger.error(`Erreur get_employee: ${error.message}`);
       throw new RpcException({
@@ -72,16 +74,12 @@ export class EmployeesController {
 
   // ==================== CREATE EMPLOYEE ====================
   @GrpcMethod('EmployeesService', 'CreateEmployee')
-  async createEmployee(data: CreateEmployeeDto & { created_by?: string }) {
+  async createEmployee(data: CreateEmployeeDto) {
     try {
-      const { created_by, ...employeeData } = data;
-      // this.logger.log(`Création d'un employé par ${created_by}`);
-      // const employee = await this.employeesService.create(employeeData, created_by);
-
       this.logger.log(`Création d'un employé`);
 
-      const employee = await this.employeesService.create(employeeData);
-      return this.formatEmployee(employee);
+      const employee = await this.employeesService.create(data);
+      return employee;
     } catch (error) {
       this.logger.error(`Erreur create_employee: ${error.message}`);
 
@@ -101,16 +99,13 @@ export class EmployeesController {
 
   // ==================== UPDATE EMPLOYEE ====================
   @GrpcMethod('EmployeesService', 'UpdateEmployee')
-  async updateEmployee(data: { id: string; updated_by?: string } & UpdateEmployeeDto) {
+  async updateEmployee(data: { id: string; } & UpdateEmployeeDto) {
     try {
-      const { id, updated_by, ...updateData } = data;
-      // this.logger.log(`Modification de l'employé ${id} par ${updated_by}`);
-      // const employee = await this.employeesService.update(id, updateData, updated_by);
-
+      const { id, ...updateData } = data;
       this.logger.log(`Modification de l'employé ${id}`);
 
       const employee = await this.employeesService.update(id, updateData);
-      return this.formatEmployee(employee);
+      return employee;
     } catch (error) {
       this.logger.error(`Erreur update_employee: ${error.message}`);
 
@@ -130,10 +125,8 @@ export class EmployeesController {
 
   // ==================== DELETE EMPLOYEE ====================
   @GrpcMethod('EmployeesService', 'DeleteEmployee')
-  async deleteEmployee(data: { id: string; deleted_by?: string }) {
+  async deleteEmployee(data: { id: string }) {
     try {
-      // this.logger.warn(`Suppression de l'employé ${data.id} par ${data.deleted_by}`);
-      // await this.employeesService.remove(data.id, data.deleted_by);
       this.logger.warn(`Suppression de l'employé ${data.id}`);
       await this.employeesService.remove(data.id);
 
@@ -149,116 +142,5 @@ export class EmployeesController {
         message: error.message || 'Erreur lors de la suppression',
       });
     }
-  }
-
-  // // ==================== DEACTIVATE EMPLOYEE ====================
-  // @GrpcMethod('EmployeesService', 'DeactivateEmployee')
-  // async deactivateEmployee(data: { id: string; deactivated_by?: string }) {
-  //   try {
-  //     this.logger.log(`Désactivation de l'employé ${data.id}`);
-  //     const employee = await this.employeesService.deactivate(data.id, data.deactivated_by);
-  //     return this.formatEmployee(employee);
-  //   } catch (error) {
-  //     throw new RpcException({
-  //       code: 3,
-  //       message: error.message || 'Erreur lors de la désactivation',
-  //     });
-  //   }
-  // }
-
-  // // ==================== ACTIVATE EMPLOYEE ====================
-  // @GrpcMethod('EmployeesService', 'ActivateEmployee')
-  // async activateEmployee(data: { id: string; activated_by?: string }) {
-  //   try {
-  //     this.logger.log(`Réactivation de l'employé ${data.id}`);
-  //     const employee = await this.employeesService.activate(data.id, data.activated_by);
-  //     return this.formatEmployee(employee);
-  //   } catch (error) {
-  //     throw new RpcException({
-  //       code: 3,
-  //       message: error.message || 'Erreur lors de la réactivation',
-  //     });
-  //   }
-  // }
-
-  // // ==================== GET EMPLOYEES BY DEPARTMENT ====================
-  // @GrpcMethod('EmployeesService', 'GetEmployeesByDepartment')
-  // async getEmployeesByDepartment(data: { department_id: string }) {
-  //   try {
-  //     this.logger.debug(`Récupération des employés du département ${data.department_id}`);
-  //     const employees = await this.employeesService.findByDepartment(data.department_id);
-
-  //     return {
-  //       data: employees.map(emp => this.formatEmployee(emp)),
-  //       total: employees.length,
-  //       page: 1,
-  //       limit: employees.length,
-  //       total_pages: 1,
-  //     };
-  //   } catch (error) {
-  //     throw new RpcException({
-  //       code: 13,
-  //       message: 'Erreur lors de la récupération',
-  //     });
-  //   }
-  // }
-
-  // // ==================== GET EMPLOYEE STATS ====================
-  // @GrpcMethod('EmployeesService', 'GetEmployeeStats')
-  // async getEmployeeStats(data: { id: string }) {
-  //   try {
-  //     this.logger.debug(`Récupération des stats de l'employé ${data.id}`);
-  //     const stats = await this.employeesService.getStats(data.id);
-
-  //     return {
-  //       employee: {
-  //         id: stats.employee.id,
-  //         full_name: stats.employee.fullName,
-  //         email: stats.employee.email,
-  //         position: stats.employee.position || '',
-  //         department: stats.employee.department || '',
-  //       },
-  //       employment: {
-  //         hire_date: stats.employment.hireDate?.toString() || '',
-  //         years_of_service: stats.employment.yearsOfService || 0,
-  //         months_of_service: stats.employment.monthsOfService || 0,
-  //         is_active: stats.employment.isActive,
-  //       },
-  //     };
-  //   } catch (error) {
-  //     throw new RpcException({
-  //       code: 5,
-  //       message: error.message || 'Erreur lors de la récupération des statistiques',
-  //     });
-  //   }
-  // }
-
-  // ==================== HELPER: FORMAT EMPLOYEE ====================
-  private formatEmployee(employee: any) {
-    return {
-      id: employee.id,
-      first_name: employee.first_name || '',
-      last_name: employee.last_name || '',
-      email: employee.email,
-      phone: employee.phone_number || '',
-      position: employee.position || '',
-      hire_date: employee.hire_date?.toISOString() || '',
-      salary: employee.salary || 0,
-      is_active: employee.status === 'active',
-      department: employee.department ? {
-        id: employee.department.id,
-        code: employee.department.code,
-        name: employee.department.name,
-        description: employee.department.description || '',
-        manager_id: employee.department.manager_id || '',
-        is_active: employee.department.status === 'active',
-        created_at: employee.department.created_at?.toISOString() || '',
-        updated_at: employee.department.updated_at?.toISOString() || '',
-      } : null,
-      department_id: employee.department_id || '',
-      user_id: employee.user_id || '',
-      created_at: employee.created_at?.toISOString() || '',
-      updated_at: employee.updated_at?.toISOString() || '',
-    };
   }
 }

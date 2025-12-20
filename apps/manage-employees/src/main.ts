@@ -8,7 +8,8 @@ import helmet from 'helmet';
 import compression from 'compression';
 
 async function bootstrap() {
-  const logger = new Logger('ManageEmployees');
+  const logger = new Logger('ManageEmployees-gRPC');
+
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
@@ -16,15 +17,15 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   // ==================== SÉCURITÉ ====================
-  app.use(helmet());
-  app.enableCors({
-    origin: configService.get('ALLOWED_ORIGINS')?.split(',') || '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    credentials: true,
-  });
+  // app.use(helmet());
+  // app.enableCors({
+  //   origin: configService.get('ALLOWED_ORIGINS')?.split(',') || '*',
+  //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  //   credentials: true,
+  // });
 
   // ==================== PERFORMANCE ====================
-  app.use(compression());
+  // app.use(compression());
 
   // ==================== CONFIGURATION MICROSERVICE GRPC ====================
   app.connectMicroservice<MicroserviceOptions>({
@@ -54,19 +55,12 @@ async function bootstrap() {
     }),
   );
 
-  // ==================== VERSIONING ====================
-  app.enableVersioning({
-    type: VersioningType.URI,
-    defaultVersion: '1',
-    prefix: 'api/v',
-  });
-
   // ==================== DÉMARRAGE ====================
   await app.startAllMicroservices();
 
   const grpcPort = configService.get('MANAGE_EMPLOYEES_GRPC_PORT', 50052);
   const httpPort = configService.get('MANAGE_EMPLOYEES_PORT', 3002);
-  const host = configService.get('HOST', '0.0.0.0');
+  const host = configService.get('MANAGE_EMPLOYEES_HOST', '0.0.0.0');
 
   await app.listen(httpPort, host);
 

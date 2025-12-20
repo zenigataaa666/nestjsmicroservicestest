@@ -17,7 +17,6 @@ async function bootstrap() {
 
     // Chemin absolu vers le fichier proto
     const protoPath = join(__dirname, '../../../proto/auth-manager.proto'); // pour dist on revient une fois
-    // const protoPath = join(process.cwd(), 'proto/auth-manager.proto');
 
     console.log('Proto Path:', protoPath);
 

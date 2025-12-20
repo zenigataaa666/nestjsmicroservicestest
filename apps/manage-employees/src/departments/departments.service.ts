@@ -48,10 +48,6 @@ export class DepartmentsService {
 
     const where: any = { deleted_at: IsNull() };
 
-    if (isActive !== undefined) {
-      where.status = isActive ? 'active' : Not('active');
-    }
-
     const [data, total] = await this.departmentRepository.findAndCount({
       where,
       relations: ['parent', 'manager', 'employees'],

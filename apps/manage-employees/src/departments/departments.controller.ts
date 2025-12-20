@@ -1,84 +1,3 @@
-// import {
-//   Controller,
-//   Get,
-//   Post,
-//   Body,
-//   Patch,
-//   Param,
-//   Delete,
-//   Query,
-//   HttpCode,
-//   HttpStatus,
-//   ParseUUIDPipe,
-//   UseGuards,
-// } from '@nestjs/common';
-// import { DepartmentsService } from './departments.service';
-// import { CreateDepartmentDto } from './dto/create-department.dto';
-// import { UpdateDepartmentDto } from './dto/update-department.dto';
-// import { PaginationDto } from '../common/dto/pagination.dto';
-
-// @Controller('departments')
-// export class DepartmentsController {
-//   constructor(private readonly departmentsService: DepartmentsService) { }
-
-//   @Post()
-//   @HttpCode(HttpStatus.CREATED)
-//   create(@Body() createDepartmentDto: CreateDepartmentDto) {
-//     return this.departmentsService.create(createDepartmentDto);
-//   }
-
-//   @Get()
-//   findAll(@Query() paginationDto: PaginationDto) {
-//     return this.departmentsService.findAll(paginationDto);
-//   }
-
-//   @Get('roots')
-//   findRootDepartments() {
-//     return this.departmentsService.findRootDepartments();
-//   }
-
-//   @Get(':id')
-//   findOne(@Param('id', ParseUUIDPipe) id: string) {
-//     return this.departmentsService.findOne(id);
-//   }
-
-//   @Get(':id/children')
-//   findChildren(@Param('id', ParseUUIDPipe) id: string) {
-//     return this.departmentsService.findChildren(id);
-//   }
-
-//   @Get(':id/hierarchy')
-//   getDepartmentHierarchy(@Param('id', ParseUUIDPipe) id: string) {
-//     return this.departmentsService.getDepartmentHierarchy(id);
-//   }
-
-//   @Patch(':id')
-//   update(
-//     @Param('id', ParseUUIDPipe) id: string,
-//     @Body() updateDepartmentDto: UpdateDepartmentDto,
-//   ) {
-//     return this.departmentsService.update(id, updateDepartmentDto);
-//   }
-
-//   @Delete(':id')
-//   @HttpCode(HttpStatus.NO_CONTENT)
-//   remove(@Param('id', ParseUUIDPipe) id: string) {
-//     return this.departmentsService.remove(id);
-//   }
-
-//   @Delete(':id/hard')
-//   @HttpCode(HttpStatus.NO_CONTENT)
-//   hardDelete(@Param('id', ParseUUIDPipe) id: string) {
-//     return this.departmentsService.hardDelete(id);
-//   }
-
-//   @Post(':id/restore')
-//   restore(@Param('id', ParseUUIDPipe) id: string) {
-//     return this.departmentsService.restore(id);
-//   }
-// }
-
-
 import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { DepartmentsService } from './departments.service';
@@ -98,7 +17,6 @@ export class DepartmentsController {
     page?: number;
     limit?: number;
     search?: string;
-    is_active?: boolean;
     sort_by?: string;
     sort_order?: string;
   }) {
@@ -109,16 +27,19 @@ export class DepartmentsController {
         page: data.page || 1,
         limit: data.limit || 10,
         search: data.search,
-        isActive: data.is_active,
+        // isActive filter removed from proto for Departments? Checking proto...
+        // Proto: GetDepartmentsRequest { ... string search = 3; bool is_active = 4; ... }
+        // Wait, current proto snippet in plan (Step 2266) REMOVED is_active from GetDepartmentsRequest???
+        // Let's check Step 2266 content.
+        // message GetDepartmentsRequest { ... string search = 3; string sort_by = 4; ... } -> NO is_active in Step 2266 snippet.
+        // Entity doesn't have status anymore. So removing isActive filter is correct.
         sortBy: data.sort_by || 'name',
         sortOrder: data.sort_order || 'ASC',
       });
 
-      console.log('result', result);
-
       // Formatter la réponse selon departments.proto
       return {
-        data: result.data.map(dept => this.formatDepartment(dept)),
+        data: result.data,
         total: result.meta.total,
         page: result.meta.page,
         limit: result.meta.limit,
@@ -133,34 +54,30 @@ export class DepartmentsController {
     }
   }
 
-  // ==================== GET EMPLOYEE ====================
+  // ==================== GET DEPARTMENT ====================
   @GrpcMethod('DepartmentsService', 'GetDepartment')
   async getDepartment(data: { id: string }) {
     try {
-      this.logger.debug(`Récupération de l'employé ${data.id}`);
+      this.logger.debug(`Récupération du département ${data.id}`);
       const department = await this.departmentsService.findOne(data.id);
-      return this.formatDepartment(department);
+      return department;
     } catch (error) {
       this.logger.error(`Erreur get_department: ${error.message}`);
       throw new RpcException({
         code: 5, // NOT_FOUND
-        message: error.message || 'Employé non trouvé',
+        message: error.message || 'Département non trouvé',
       });
     }
   }
 
-  // ==================== CREATE EMPLOYEE ====================
+  // ==================== CREATE DEPARTMENT ====================
   @GrpcMethod('DepartmentsService', 'CreateDepartment')
-  async createDepartment(data: CreateDepartmentDto & { created_by?: string }) {
+  async createDepartment(data: CreateDepartmentDto) {
     try {
-      const { created_by, ...departmentData } = data;
-      // this.logger.log(`Création d'un employé par ${created_by}`);
-      // const department = await this.departmentsService.create(departmentData, created_by);
+      this.logger.log(`Création d'un département`);
 
-      this.logger.log(`Création d'un employé`);
-
-      const department = await this.departmentsService.create(departmentData);
-      return this.formatDepartment(department);
+      const department = await this.departmentsService.create(data);
+      return department;
     } catch (error) {
       this.logger.error(`Erreur create_department: ${error.message}`);
 
@@ -178,18 +95,15 @@ export class DepartmentsController {
     }
   }
 
-  // ==================== UPDATE EMPLOYEE ====================
+  // ==================== UPDATE DEPARTMENT ====================
   @GrpcMethod('DepartmentsService', 'UpdateDepartment')
-  async updateDepartment(data: { id: string; updated_by?: string } & UpdateDepartmentDto) {
+  async updateDepartment(data: { id: string; } & UpdateDepartmentDto) {
     try {
-      const { id, updated_by, ...updateData } = data;
-      // this.logger.log(`Modification de l'employé ${id} par ${updated_by}`);
-      // const department = await this.departmentsService.update(id, updateData, updated_by);
-
-      this.logger.log(`Modification de l'employé ${id}`);
+      const { id, ...updateData } = data;
+      this.logger.log(`Modification du département ${id}`);
 
       const department = await this.departmentsService.update(id, updateData);
-      return this.formatDepartment(department);
+      return department;
     } catch (error) {
       this.logger.error(`Erreur update_department: ${error.message}`);
 
@@ -207,18 +121,16 @@ export class DepartmentsController {
     }
   }
 
-  // ==================== DELETE EMPLOYEE ====================
+  // ==================== DELETE DEPARTMENT ====================
   @GrpcMethod('DepartmentsService', 'DeleteDepartment')
-  async deleteDepartment(data: { id: string; deleted_by?: string }) {
+  async deleteDepartment(data: { id: string; }) {
     try {
-      // this.logger.warn(`Suppression de l'employé ${data.id} par ${data.deleted_by}`);
-      // await this.departmentsService.remove(data.id, data.deleted_by);
-      this.logger.warn(`Suppression de l'employé ${data.id}`);
+      this.logger.warn(`Suppression du département ${data.id}`);
       await this.departmentsService.remove(data.id);
 
       return {
         success: true,
-        message: 'Employé supprimé avec succès',
+        message: 'Département supprimé avec succès',
         code: 0,
       };
     } catch (error) {
@@ -228,19 +140,5 @@ export class DepartmentsController {
         message: error.message || 'Erreur lors de la suppression',
       });
     }
-  }
-
-  // ==================== HELPER: FORMAT DEPARTMENT ====================
-  private formatDepartment(department: any) {
-    return {
-      id: department.id,
-      code: department.code,
-      name: department.name,
-      description: department.description || '',
-      manager_id: department.manager_id || '',
-      is_active: department.status === 'active',
-      created_at: department.created_at?.toISOString() || '',
-      updated_at: department.updated_at?.toISOString() || '',
-    };
   }
 }

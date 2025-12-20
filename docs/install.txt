@@ -22,3 +22,8 @@ npm install -D grpc-tools ts-proto
 
 npm install --save-dev ts-node tsconfig-paths
 
+
+
+npm install --save multer
+npm i -save-dev @types/multer
+
