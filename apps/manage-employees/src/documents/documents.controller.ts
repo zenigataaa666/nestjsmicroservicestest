@@ -1,8 +1,7 @@
-import { Controller, Logger, Post, UseInterceptors, UploadedFile, Body } from '@nestjs/common';
+import { Controller, Logger, Post, UseInterceptors, UploadedFile, Body, BadRequestException } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+
 import { DocumentsService } from './documents.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
@@ -15,13 +14,15 @@ export class DocumentsController {
 
     @Post('upload')
     @UseInterceptors(FileInterceptor('file', {
-        storage: diskStorage({
-            destination: './uploads',
-            filename: (req, file, cb) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
-            },
-        }),
+        fileFilter: (req, file, cb) => {
+            if (!file.originalname.match(/\.(jpg|jpeg|png|gif|pdf)$/)) {
+                return cb(new Error('Only image files and PDFs are allowed!'), false);
+            }
+            cb(null, true);
+        },
+        // limits: {
+        //     fileSize: 1024 * 1024 * 5, // 5MB //pas élégant c'est de la surcharge
+        // },
     }))
     async uploadFile(
         @UploadedFile() file: Express.Multer.File,
